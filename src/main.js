@@ -1,5 +1,5 @@
 import * as THREE from "three";
-
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // Scene
 const scene = new THREE.Scene();
 const sizes = {
@@ -7,13 +7,13 @@ const sizes = {
   height: 600,
 };
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
 const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
 });
 const mesh = new THREE.Mesh(geometry, material);
 // * position
-// mesh.position.set(0.7, -0.6, 1);
+// mesh.position.set(1, -1, 0);
 // // * scale
 // mesh.scale.x = 2;
 // mesh.scale.y = 0.25;
@@ -24,19 +24,44 @@ const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 // Camera
+// const camera = new THREE.PerspectiveCamera(
+//   75,
+//   sizes.width / sizes.height
+// );
 const camera = new THREE.PerspectiveCamera(
   75,
-  sizes.width / sizes.height
+  sizes.width / sizes.height,
+  1,
+  100
 );
-camera.position.z = 3;
+// const aspectRatio = sizes.width / sizes.height;
+// const camera = new THREE.OrthographicCamera(
+//   -1 * aspectRatio,
+//   1 * aspectRatio,
+//   1,
+//   -1,
+//   0.1,
+//   100
+// );
+// camera.position.z = 3;
+camera.position.x = 2;
+camera.position.y = 2;
+camera.position.z = 2;
+camera.lookAt(mesh.position);
+
+// camera.position.y = 0.5;
+// camera.position.x = 0.5;
+
 // * camera lookAt
-// camera.lookAt(new THREE.Vector3(0, -1, 0));
+// camera.lookAt(mesh.position);
 scene.add(camera);
 
 // Renderer
+const canvas = document.querySelector("canvas.webgl");
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("canvas.webgl"),
 });
+const controls = new OrbitControls(camera, canvas);
 
 // * axes helper
 const axesHelper = new THREE.AxesHelper(2);
@@ -55,15 +80,22 @@ const animate = () => {
 
   const elapsedTime = clock.getElapsedTime();
 
-  mesh.rotation.y = elapsedTime;
-  mesh.position.x = Math.cos(elapsedTime);
-  mesh.position.y = Math.sin(elapsedTime);
-  mesh.position.z = Math.sin(elapsedTime);
-  //  * update the render (needs to put inside the recursion fn, since need the renderer re-render each frame,to feel the change)
-  renderer.render(scene, camera);
+  // mesh.rotation.y = elapsedTime;
+  // mesh.position.x = Math.cos(elapsedTime);
+  // mesh.position.y = Math.sin(elapsedTime);
+  // mesh.position.z = Math.sin(elapsedTime);
 
+  // camera.fov += 0.1;
+
+  // camera.updateProjectionMatrix();
+
+  //  * update the render (needs to put inside the recursion fn, since need the renderer re-render each frame,to feel the change)
+  controls.update();
+  renderer.render(scene, camera);
   // animate again on the next frame
-  window.requestAnimationFrame(animate);
+  // window.requestAnimationFrame(animate);
 };
+
+renderer.setAnimationLoop(animate);
 
 animate();
