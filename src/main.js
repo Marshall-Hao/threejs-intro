@@ -11,9 +11,12 @@ const sizes = {
   height: window.innerHeight,
 };
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
+// const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 1, 1);
+// const geometry = new THREE.SphereGeometry(1, 32, 32);
+const geometry = new THREE.TorusGeometry(1, 0.5, 16, 100);
 const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
+  wireframe: true,
 });
 const mesh = new THREE.Mesh(geometry, material);
 // * position
@@ -36,7 +39,7 @@ const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
   1,
-  100
+  1000
 );
 // const aspectRatio = sizes.width / sizes.height;
 // const camera = new THREE.OrthographicCamera(
@@ -87,6 +90,9 @@ window.addEventListener("resize", () => {
 
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+  );
 });
 
 // * for animation
