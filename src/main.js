@@ -2,9 +2,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // Scene
 const scene = new THREE.Scene();
+// const sizes = {
+//   width: 800,
+//   height: 600,
+// };
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 // Object
 const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
@@ -70,6 +74,20 @@ scene.add(axesHelper);
 // * add everything into the scene
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// * resize
+window.addEventListener("resize", () => {
+  // Update sizes
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+});
 
 // * for animation
 const clock = new THREE.Clock();
