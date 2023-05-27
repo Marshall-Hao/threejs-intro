@@ -30,7 +30,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 3;
 // * camera lookAt
-camera.lookAt(new THREE.Vector3(0, -1, 0));
+// camera.lookAt(new THREE.Vector3(0, -1, 0));
 scene.add(camera);
 
 // Renderer
@@ -45,3 +45,25 @@ scene.add(axesHelper);
 // * add everything into the scene
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// * for animation
+const clock = new THREE.Clock();
+
+const animate = () => {
+  //  objects rotate
+  // mesh.rotation.y += 0.01;
+
+  const elapsedTime = clock.getElapsedTime();
+
+  mesh.rotation.y = elapsedTime;
+  mesh.position.x = Math.cos(elapsedTime);
+  mesh.position.y = Math.sin(elapsedTime);
+  mesh.position.z = Math.sin(elapsedTime);
+  //  * update the render (needs to put inside the recursion fn, since need the renderer re-render each frame,to feel the change)
+  renderer.render(scene, camera);
+
+  // animate again on the next frame
+  window.requestAnimationFrame(animate);
+};
+
+animate();
