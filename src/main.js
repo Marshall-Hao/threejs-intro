@@ -30,3 +30,5 @@ const renderer = new THREE.WebGLRenderer({
 // Sizes
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// start
