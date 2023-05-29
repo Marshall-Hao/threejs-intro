@@ -2,62 +2,69 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 // Scene
 const scene = new THREE.Scene();
-// const sizes = {
-//   width: 800,
-//   height: 600,
-// };
+
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
-// Object
-// const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 1, 1);
-// const geometry = new THREE.SphereGeometry(1, 32, 32);
-const geometry = new THREE.TorusGeometry(1, 0.5, 16, 100);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  wireframe: true,
-});
-const mesh = new THREE.Mesh(geometry, material);
-// * position
-// mesh.position.set(1, -1, 0);
-// // * scale
-// mesh.scale.x = 2;
-// mesh.scale.y = 0.25;
-// mesh.scale.z = 0.5;
-// // * rotation
-// mesh.rotation.x = Math.PI * 0.25;
-// mesh.rotation.y = Math.PI * 0.25;
-scene.add(mesh);
 
-// Camera
-// const camera = new THREE.PerspectiveCamera(
-//   75,
-//   sizes.width / sizes.height
-// );
+const material = new THREE.MeshNormalMaterial();
+// const material = new THREE.MeshDepthMaterial();
+const donutGeometry = new THREE.TorusGeometry(
+  0.3,
+  0.2,
+  20,
+  45
+);
+
+const BoxGeometry = new THREE.BoxGeometry(1, 1, 1, 2, 1, 1);
+
+const geos = [donutGeometry, BoxGeometry];
+for (let i = 0; i < 100; i++) {
+  const donut = new THREE.Mesh(
+    geos[Math.floor(Math.random() + 0.5)],
+    material
+  );
+
+  donut.position.x = (Math.random() - 0.5) * 10;
+  donut.position.y = (Math.random() - 0.5) * 10;
+  donut.position.z = (Math.random() - 0.5) * 10;
+
+  donut.rotation.x = Math.random() * Math.PI;
+  donut.rotation.y = Math.random() * Math.PI;
+
+  const scale = Math.random();
+  donut.scale.set(scale, scale, scale);
+  scene.add(donut);
+}
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(0.5, 16, 16),
+  material
+);
+sphere.position.x = -1.5;
+
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1),
+  material
+);
+
+const torus = new THREE.Mesh(
+  new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+  material
+);
+torus.position.x = 1.5;
+scene.add(sphere, plane, torus);
+
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
   1,
   1000
 );
-// const aspectRatio = sizes.width / sizes.height;
-// const camera = new THREE.OrthographicCamera(
-//   -1 * aspectRatio,
-//   1 * aspectRatio,
-//   1,
-//   -1,
-//   0.1,
-//   100
-// );
-// camera.position.z = 3;
+
 camera.position.x = 2;
 camera.position.y = 2;
 camera.position.z = 2;
-camera.lookAt(mesh.position);
-
-// camera.position.y = 0.5;
-// camera.position.x = 0.5;
 
 // * camera lookAt
 // camera.lookAt(mesh.position);
@@ -71,8 +78,6 @@ const renderer = new THREE.WebGLRenderer({
 const controls = new OrbitControls(camera, canvas);
 
 // * axes helper
-const axesHelper = new THREE.AxesHelper(2);
-scene.add(axesHelper);
 
 // * add everything into the scene
 renderer.setSize(sizes.width, sizes.height);
@@ -104,15 +109,16 @@ const animate = () => {
 
   const elapsedTime = clock.getElapsedTime();
 
-  // mesh.rotation.y = elapsedTime;
-  // mesh.position.x = Math.cos(elapsedTime);
-  // mesh.position.y = Math.sin(elapsedTime);
-  // mesh.position.z = Math.sin(elapsedTime);
-
-  // camera.fov += 0.1;
-
-  // camera.updateProjectionMatrix();
-
+  const children = scene.children;
+  children.forEach((element, i) => {
+    element.rotation.y = elapsedTime;
+    element.position.x +=
+      (Math.cos(elapsedTime) * 0.005 * i) / 10;
+    element.position.x +=
+      (Math.sin(elapsedTime) * 0.005 * i) / 10;
+    element.position.x +=
+      (Math.sin(elapsedTime) * 0.005 * i) / 10;
+  });
   //  * update the render (needs to put inside the recursion fn, since need the renderer re-render each frame,to feel the change)
   controls.update();
   renderer.render(scene, camera);
